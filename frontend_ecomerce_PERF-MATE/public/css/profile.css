@@ -1,0 +1,67 @@
+.profile-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.profile-container h1 {
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+.profile-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+    padding: 20px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h2 {
+    font-size: 20px;
+}
+
+.card-content p {
+    margin: 10px 0;
+    color: #444;
+}
+
+.edit-btn {
+    background: #3483fa;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.edit-btn:hover {
+    background: #2968c8;
+}
+
+.input-edit {
+    width: 100%;
+    padding: 6px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.save-btn {
+    background: #00a650;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.loading {
+    color: #999;
+    font-style: italic;
+}
