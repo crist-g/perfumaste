@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadProfileData();
+    loadOrders();
 
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -195,4 +196,71 @@ function getModalFields(section) {
 function formatLabel(text) {
     return text.replace(/_/g, ' ')
                .replace(/\b\w/g, l => l.toUpperCase());
+}
+
+/* PEDIDOS DEL USUARIO */
+
+
+function loadOrders() {
+    fetch(`${API_URL}/orders`, { 
+        // 👉 ENDPOINT REAL:
+        // GET /api/orders (del usuario autenticado)
+        headers: {
+            'Authorization': `Bearer ${TOKEN}`,
+            'Accept': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => renderOrders(data))
+    .catch(() => {
+        document.getElementById('orders-info').innerHTML =
+            `<p class="empty-data">No se pudieron cargar los pedidos</p>`;
+    });
+}
+
+function renderOrders(orders) {
+    const container = document.getElementById('orders-info');
+    container.innerHTML = '';
+
+    if (!orders || orders.length === 0) {
+        container.innerHTML = `
+            <p class="empty-data">Aún no has realizado pedidos</p>
+        `;
+        return;
+    }
+
+    orders.forEach(order => {
+        const div = document.createElement('div');
+        div.className = 'order-item';
+
+        div.innerHTML = `
+            <div class="order-header">
+                <span class="order-id">Pedido #${order.id}</span>
+                <span class="order-status status-${order.status}">
+                    ${formatStatus(order.status)}
+                </span>
+            </div>
+
+            <div class="order-meta">
+                <span>${order.items_count} productos</span>
+                <span>Total: $${order.total}</span>
+            </div>
+
+            <div class="order-date">
+                ${new Date(order.created_at).toLocaleDateString()}
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+function formatStatus(status) {
+    const map = {
+        confirmed: 'Confirmado',
+        shipped: 'Enviado',
+        delivering: 'En reparto',
+        delivered: 'Entregado'
+    };
+    return map[status] || status;
 }

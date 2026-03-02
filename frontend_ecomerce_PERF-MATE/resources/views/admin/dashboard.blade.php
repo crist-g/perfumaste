@@ -9,6 +9,7 @@
         <button id="create-product-btn" class="btn-primary">
             + Nuevo perfume
         </button>
+        <a href="{{ route('admin.orders') }}" class="btn-primary">📦 Pedidos</a>
     </div>
 
 

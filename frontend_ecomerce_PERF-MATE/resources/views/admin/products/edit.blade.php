@@ -15,9 +15,6 @@
         <label>Descripción</label>
         <textarea>Perfume masculino</textarea>
 
-        <label>Imagen (URL)</label>
-        <input type="text" value="https://via.m/200">
-
         <button class="btn">Actualizar</button>
         <a href="/admin/productos" class="btn">Cancelar</a>
     </form>

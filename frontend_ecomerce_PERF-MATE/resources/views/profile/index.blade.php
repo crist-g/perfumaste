@@ -53,4 +53,16 @@
     </div>
 </div>
 
+{{-- PEDIDOS --}}
+<div class="profile-card">
+    <div class="card-header">
+        <h2>Mis pedidos</h2>
+    </div>
+    <div class="card-content" id="orders-info">
+        <p class="loading">Cargando pedidos...</p>
+    </div>
+</div>
+
+<script src="{{ asset('js/profile.js') }}"></script>
+
 @endsection

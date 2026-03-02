@@ -1,0 +1,24 @@
+.status-select {
+    padding: 6px;
+    border-radius: 6px;
+}
+
+.status-confirmado {
+    color: #1e7e34;
+    font-weight: bold;
+}
+
+.status-enviado {
+    color: #0056b3;
+    font-weight: bold;
+}
+
+.status-reparto {
+    color: #e0a800;
+    font-weight: bold;
+}
+
+.status-entregado {
+    color: #28a745;
+    font-weight: bold;
+}

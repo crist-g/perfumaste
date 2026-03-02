@@ -35,7 +35,6 @@ Route::post('/login', function (Request $request) {
 
 })->name('login.submit');
 
-/* LOGOUT */
 Route::get('/logout', function () {
     session()->flush();
     return redirect('/');
@@ -63,3 +62,7 @@ Route::get('/carrito', function () {
 Route::get('/ticket', function () {
     return view('ticket');
 });
+
+Route::get('/admin/orders/orders', function () {
+    return view('admin.orders');
+})->name('admin.orders');

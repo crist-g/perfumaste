@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
             Bienvenido, <strong>${userName}</strong>
         </span>
 
+        <a href="/profile">
+            <img src="/images/icons/user.png" class="login-icon">
+        </a>
+
         <a href="/cart">
             <img src="/images/icons/cart.png" class="login-icon">
         </a>

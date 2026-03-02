@@ -11,8 +11,10 @@
     <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
     <link rel="stylesheet" href="{{ asset('css/payment.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/cart.css') }}">
     <link rel="stylesheet" href="{{ asset('css/success-view.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-orders.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/product-cart.css') }}">
+
 </head>
 
 <body>
@@ -39,7 +41,6 @@
 
 <script src="{{ asset('js/app.js') }}"></script>
 <script src="{{ asset('js/cart.js') }}"></script>
-<script src="{{ asset('js/profile.js') }}"></script>
 <script src="{{ asset('js/payment.js') }}"></script>
 <script src="{{ asset('js/admin.js') }}"></script>
 <script src="{{ asset('js/navbar.js') }}"></script>
