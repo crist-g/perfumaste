@@ -65,3 +65,98 @@
     color: #999;
     font-style: italic;
 }
+
+/* Animaciones y transiciones */
+
+/* Entrada suave del contenedor */
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.profile-container {
+    animation: fadeSlide .5s ease-out;
+}
+
+/* Cards */
+.profile-card {
+    animation: fadeSlide .4s ease-out;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,.1);
+}
+
+/* Header */
+.card-header {
+    transition: opacity .2s ease;
+}
+
+/* Texto cargando */
+.loading {
+    animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%   { opacity: .4; }
+    50%  { opacity: .9; }
+    100% { opacity: .4; }
+}
+
+/* Botón editar */
+.edit-btn {
+    transition: background .2s ease, transform .15s ease, box-shadow .15s ease;
+}
+
+.edit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+}
+
+.edit-btn:active {
+    transform: scale(.97);
+}
+
+/* Inputs de edición */
+.input-edit {
+    animation: fadeSlide .25s ease-out;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.input-edit:focus {
+    outline: none;
+    border-color: #3483fa;
+    box-shadow: 0 0 0 2px rgba(52,131,250,.15);
+}
+
+/* Texto editable */
+.card-content span {
+    transition: background .15s ease;
+}
+
+.card-content span:hover {
+    background: rgba(0,0,0,.03);
+    border-radius: 4px;
+}
+
+/* Guardado visual sutil */
+.save-success {
+    animation: saveFlash .6s ease;
+}
+
+@keyframes saveFlash {
+    0% {
+        background: rgba(0,166,80,.15);
+    }
+    100% {
+        background: transparent;
+    }
+}

@@ -326,9 +326,98 @@ body {
     height: auto;
 }
 
-/* Responsive */
-@media (max-width: 700px) {
-    .search input {
-        width: 100%;
+/* Animaciones y transiciones */
+
+/* Aparición suave */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Navbar */
+.navbar {
+    animation: fadeUp .5s ease-out;
+}
+
+/* Hero */
+.hero {
+    animation: fadeUp .6s ease-out;
+}
+
+/* Cards (productos, sugerencias, carrito) */
+.product-card,
+.suggestion-card,
+.cart-item {
+    animation: fadeUp .5s ease-out;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+/* Hover elegante */
+.product-card:hover,
+.cart-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,.1);
+}
+
+/* Botones */
+.btn {
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+}
+
+.btn:active {
+    transform: scale(.97);
+}
+
+/* Inputs */
+input,
+select {
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #3483fa;
+    box-shadow: 0 0 0 2px rgba(52,131,250,.15);
+}
+
+/* Iconos del navbar */
+.login-icon {
+    transition: transform .2s ease, opacity .2s ease;
+}
+
+.login-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Paginación 
+.page-btn {
+    transition: background .2s ease, transform .15s ease;
+} */
+
+.page-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Filtros */
+.filters input,
+.filters select {
+    transition: box-shadow .2s ease, border-color .2s ease;
+}
+
+.filters input:focus,
+.filters select:focus {
+    border-color: #3483fa;
+    box-shadow: 0 0 0 2px rgba(52,131,250,.12);
 }

@@ -49,20 +49,18 @@ window.addProductFromApi = async function(productId) {
 }
 
 // LÓGICA DEL CARRITO
-// Ajustar la cantidad de un artículo específico (+1 o -1)
 window.changequantity = function(index, amount) {
     const cart = getCart();
     let nuevaCantidad = cart[index].quantity + amount;
 
-    // Regla de negocio: impedir que la cantidad sea menor a 1
     if (nuevaCantidad >= 1) {
         cart[index].quantity = nuevaCantidad;
         saveCart(cart);
-        renderCart(); // Actualizar la interfaz y el total inmediatamente
+        renderCart();
     }
 }
 
-// Eliminar un producto del arreglo tras confirmar la acción con el usuario
+// Eliminar un producto
 window.removeItem = function(index) {
     if(confirm('¿Seguro que deseas sacar este perfume del carrito?')) {
         const cart = getCart();

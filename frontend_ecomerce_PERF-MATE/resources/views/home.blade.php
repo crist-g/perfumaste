@@ -11,10 +11,6 @@
 <section class="filters">
     <input type="text" id="search" placeholder="Buscar perfume">
 
-    <select id="brand">
-        <option value="">Todas las marcas</option>
-    </select>
-
     <input type="number" id="min_price" placeholder="Precio mínimo" min="0">
     <input type="number" id="max_price" placeholder="Precio máximo" min="0" max="10000">
 

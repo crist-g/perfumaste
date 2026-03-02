@@ -37,7 +37,20 @@
             <p class="loading">Cargando...</p>
         </div>
     </div>
-
 </section>
+
+{{-- MODAL CREAR --}}
+<div class="modal" id="create-modal">
+    <div class="modal-box">
+        <h3 id="modal-title"></h3>
+
+        <div id="modal-fields"></div>
+
+        <div class="modal-actions">
+            <button class="btn small" onclick="closeModal()">Cancelar</button>
+            <button class="btn primary" onclick="saveModalData()">Guardar</button>
+        </div>
+    </div>
+</div>
 
 @endsection
