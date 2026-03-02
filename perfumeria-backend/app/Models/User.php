@@ -22,7 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role' // 0 = Cliente, 1 = Vendedor
+        'role', // 0 = Cliente, 1 = Vendedor
+        'address',
+        'payment'
     ];
 
     /**
@@ -45,6 +47,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'address' => 'array',
+            'payment' => 'array',
         ];
     }
 }

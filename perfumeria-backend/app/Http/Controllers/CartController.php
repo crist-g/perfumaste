@@ -81,14 +81,37 @@ class CartController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
-    }
+        $request->validate([
+            'quantity' => 'required|integer|min:1'
+        ]);
 
+        // Buscar el item verificnado que sea del usuario actual
+        $cartItem = Cart::where('user_id', Auth::id())->where('id', $id)->first();
+
+        if (!$cartItem) {
+            return response()->json(['message' => 'Item no encontrado'], 404);
+        }
+
+        // Validar stock de nuevo aquí
+        $cartItem->quantity = $request->quantity;
+        $cartItem->save();
+
+        return response()->json(['message' => 'Cantidad actualizada correctamente'], 200);
+    }
+    
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $cartItem = Cart::where('user_id', Auth::id())->where('id', $id)->first();
+
+        if (!$cartItem) {
+            return response()->json(['message' => 'Item no encontrado'], 404);
+        }
+
+        $cartItem->delete();
+
+        return response()->json(['message' => 'Producto eliminado del carrito'], 200);
     }
 }

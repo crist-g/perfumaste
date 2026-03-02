@@ -26,6 +26,38 @@ class OrderController extends Controller
     }
 
     /**
+     * Devuelve todas las órdenes (para admin/vendedor)
+     */
+    public function allOrders()
+    {
+        $orders = Order::with('items.product', 'user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($orders, 200);
+    }
+
+    /**
+     * Cambiar el estado de una orden (solo admin)
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $order = Order::find($id);
+        if (!$order) {
+            return response()->json(['message' => 'Orden no encontrada'], 404);
+        }
+
+        $request->validate([
+            'status' => 'required|string'
+        ]);
+
+        $order->status = $request->status;
+        $order->save();
+
+        return response()->json(['message' => 'Estado actualizado', 'order' => $order], 200);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -113,6 +145,9 @@ class OrderController extends Controller
                 // Restar stock de verdad
                 $product->decrement('stock', $item['quantity']);
             }
+
+            // vaciar el carrito del usuario cuando compre
+            Cart::where('user_id', $user->id)->delete();
 
             return response()->json([
                 'message' => 'Orden creada exitosamente',
