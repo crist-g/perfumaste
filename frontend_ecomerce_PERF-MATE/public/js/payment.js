@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // CARRITO
-// ayuda para leer el carrito desde el servidor en lugar de localStorage
 async function fetchServerCart() {
     const token = localStorage.getItem('api_token');
     if (!token) return [];

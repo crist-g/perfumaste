@@ -75,7 +75,7 @@ function renderCart(items, total) {
     items.forEach(item => {
         // Validar imagen y normalizar URL de placehold
         let imagen = item.product.image_url || '';
-        if (imagen.includes('via.placehold.co')) {
+        if (imagen.includes('placehold.co')) {
             imagen = `https://placehold.co/400x400/000000/FFF?text=${encodeURIComponent(item.product.name)}`;
         } else if (imagen.startsWith('/storage')) {
             imagen = `http://127.0.0.1:8000${imagen}`;

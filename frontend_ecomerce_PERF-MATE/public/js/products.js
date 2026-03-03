@@ -28,9 +28,16 @@ async function cargarPerfumes(filtros) {
 
             // Imagen
             const img = clone.querySelector('.p-image');
-            img.src = p.image_url?.startsWith('/storage') 
-                ? `http://127.0.0.1:8000${p.image_url}` 
-                : (p.image_url || `https://placehold.co/400x400?text=${p.name}`);
+            if (p.image_url?.startsWith('/storage')) {
+                // Fotos reales subidas por el admin
+                img.src = `http://127.0.0.1:8000${p.image_url}`;
+            } else if (!p.image_url || p.image_url.includes('placehold.co')) {
+                // Prfumes del la bede usando seeders con su nombre
+                img.src = `https://placehold.co/400x400/000000/FFF?text=${encodeURIComponent(p.name)}`;
+            } else {
+                // Cualquier otra URL válida de internet
+                img.src = p.image_url;
+            }
             
             // Textos
             clone.querySelector('.p-name').textContent = p.name;

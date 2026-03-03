@@ -150,7 +150,6 @@ function profileOpenModal(section) {
     modal.classList.remove('hidden');
 }
 
-
 function profileCloseModal() {
     currentModalSection = null;
     const modal = document.getElementById('data-modal');

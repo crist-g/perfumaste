@@ -5,16 +5,15 @@
 <section class="product-detail">
 
     <div class="product-card">
+
+        <!-- Imagen -->
         <div class="product-image">
-            <img id="product-image" src="https://via.placehold.co/400" alt="Perfume">
+            <img id="product-image" src="https://via.placehold.co/500" alt="Perfume">
         </div>
 
+        <!-- Información principal -->
         <div class="product-info">
             <h2 id="product-name">Cargando...</h2>
-
-            <p class="description" id="product-description">
-                Cargando descripción...
-            </p>
 
             <p class="price" id="product-price">$0 MXN</p>
 
@@ -24,7 +23,16 @@
                 Agregar al carrito
             </button>
         </div>
+
     </div>
+
+    <div class="product-description-box">
+        <h3>Descripción del producto</h3>
+        <p class="description" id="product-description">
+            Cargando descripción...
+        </p>
+    </div>
+<script src="{{ asset('js/details.js') }}"></script>
 
 </section>
 

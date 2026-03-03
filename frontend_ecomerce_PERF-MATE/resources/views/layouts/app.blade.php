@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="{{ asset('css/success-view.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin-orders.css') }}">
     <link rel="stylesheet" href="{{ asset('css/product-cart.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/details.css') }}">
 
 </head>
 
