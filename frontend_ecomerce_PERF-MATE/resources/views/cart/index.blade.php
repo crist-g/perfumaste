@@ -15,5 +15,4 @@
     </div>
 </section>
 
-<script src="{{ asset('js/cart.js') }}"></script>
 @endsection

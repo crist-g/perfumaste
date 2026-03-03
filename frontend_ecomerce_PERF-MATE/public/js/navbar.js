@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const userRole = localStorage.getItem('user_role');
 
     const navbar = document.getElementById('navbar-actions');
+    
+    if (!navbar) return;
 
     // Usuario NO logueado
     if (!token || !userName) {
@@ -15,16 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Usuario logueado
     let html = `
+        <a href="/perfil" class="profile-link">
+            <img src="/images/icons/user.png" alt="Perfil" style="width: 20px; vertical-align: middle;">
+            Mi Perfil
+        </a>
         <span class="login-icon">
             Bienvenido, <strong>${userName}</strong>
         </span>
 
-        <a href="/profile">
-            <img src="/images/icons/user.png" class="login-icon">
-        </a>
-
-        <a href="/cart">
-            <img src="/images/icons/cart.png" class="login-icon">
+        <a href="/carrito">
+            <img src="/images/icons/cart.png" class="login-icon" alt="Carrito">
         </a>
     `;
 
@@ -37,10 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // Logout
+    // Logout (Quitamos el ID duplicado de la imagen)
     html += `
         <a href="/login" id="btn-salir">
-            <img src="/images/icons/logout.png" class="login-icon logout-btn" id="btn-salir">
+            <img src="/images/icons/logout.png" class="login-icon logout-btn" alt="Salir">
         </a>
     `;
 

@@ -30,12 +30,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
         switch ($section) {
             case 'personal':
-                // name / email
-                $user->name = $request->input('name', $user->name);
-                $user->email = $request->input('email', $user->email);
+                $request->validate([
+                    'name' => 'required|string|max:255',
+                    'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+                ]);
+
+                $user->name = $request->input('name');
+                $user->email = $request->input('email');
                 $user->save();
                 return response()->json([ 'name' => $user->name, 'email' => $user->email ]);
-
             case 'address':
             case 'payment':
                 $data = $request->all();

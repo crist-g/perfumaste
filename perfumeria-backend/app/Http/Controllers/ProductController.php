@@ -13,23 +13,36 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        // Nombre de la categoría
+        // Traer los productos con su categoría
         $query = Product::with('category');
-        // Filtro por categoría
-        if ($request->has('category_id')){
+
+        // Filtro por búsqueda de texto (nombre del perfume)
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'LIKE', '%' . $request->search . '%');
+        }
+
+        // iltro por categoría (Si el frontend manda el ID)
+        if ($request->has('category_id') && $request->category_id != ''){
             $query->where('category_id', $request->category_id);
         }
 
+        // Filtro por categoría (Si el frontend manda el nombre )
+        if ($request->has('category') && $request->category != '') {
+            $query->whereHas('category', function($q) use ($request) {
+                $q->where('name', $request->category);
+            });
+        }
+
         // Filtro por marca
-        if ($request->has('brand')) {
+        if ($request->has('brand') && $request->brand != '') {
             $query->where('brand', $request->brand);
         }
 
         // Filtro por rango de precio
-        if ($request->has('min_price')) {
+        if ($request->has('min_price') && $request->min_price != '') {
             $query->where('price', '>=', $request->min_price);
         }
-        if ($request->has('max_price')) {
+        if ($request->has('max_price') && $request->max_price != '') {
             $query->where('price', '<=', $request->max_price);
         }
 

@@ -1,134 +1,144 @@
 document.addEventListener('DOMContentLoaded', () => {
+    if (!document.querySelector('.profile-container')) return; 
+    
     loadProfileData();
     loadOrders();
 
     document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.onclick = (e) => {
+            e.preventDefault();
             const section = btn.dataset.section;
-            enableEdit(section, btn);
-        });
+            const container = document.getElementById(`${section}-info`);
+
+            if (container && container.querySelector('.empty-data')) {
+                profileOpenModal(section);
+                return;
+            }
+
+            // Leemos qué dice el botón para saber qué acción tomar
+            if (btn.textContent.trim() === 'Guardar') {
+                saveSection(section, btn);
+            } else {
+                enableEdit(section, btn);
+            }
+        };
     });
 
     const modalForm = document.getElementById('modal-form');
-    if (modalForm) {
-        modalForm.addEventListener('submit', submitModalData);
-    }
+    if (modalForm) modalForm.addEventListener('submit', submitModalData);
 });
 
-/* Config */
+/* Configuración de API */
+const API_URL = window.APP_CONFIG?.apiUrl || 'http://127.0.0.1:8000/api';
+const TOKEN = localStorage.getItem('api_token');
 
-const API_URL = window.APP_CONFIG?.apiUrl || '';
-const TOKEN = localStorage.getItem('token');
-
-/* Cargar user data */
+async function profileFetch(path, options = {}) {
+    return fetch(API_URL + path, options);
+}
 
 function loadProfileData() {
-    fetch(`${API_URL}/user`, {
-        headers: {
-            'Authorization': `Bearer ${TOKEN}`,
-            'Accept': 'application/json'
-        }
-    })
+    profileFetch('/user', { headers: { 'Authorization': `Bearer ${TOKEN}`, 'Accept': 'application/json' } })
     .then(res => res.json())
     .then(data => renderProfile(data))
     .catch(err => console.error('Error cargando perfil:', err));
 }
 
-/* render perfil */
-
 function renderProfile(data) {
-    renderSection('personal', {
-        name: data.name,
-        email: data.email
-    });
-
-    if (data.address) {
-        renderSection('address', data.address);
-    } else {
-        renderEmptySection('address');
-    }
-
-    if (data.payment) {
-        renderSection('payment', data.payment);
-    } else {
-        renderEmptySection('payment');
-    }
+    renderSection('personal', { name: data.name, email: data.email });
+    if (data.address) renderSection('address', data.address);
+    else renderEmptySection('address');
 }
 
 function renderSection(section, fields) {
     const container = document.getElementById(`${section}-info`);
     container.innerHTML = '';
-
     Object.entries(fields).forEach(([key, value]) => {
         const p = document.createElement('p');
-        p.innerHTML = `
-            <strong>${formatLabel(key)}:</strong>
-            <span data-field="${key}">${value ?? '-'}</span>
-        `;
+        p.innerHTML = `<strong>${formatLabel(key)}:</strong> <span data-field="${key}">${value ?? '-'}</span>`;
         container.appendChild(p);
     });
 }
 
 function renderEmptySection(section) {
     const container = document.getElementById(`${section}-info`);
-    container.innerHTML = `
-        <p class="empty-data">No hay información registrada</p>
-        <button class="add-btn" onclick="openModal('${section}')">
-            Agregar información
-        </button>
-    `;
+    container.innerHTML = `<p class="empty-data">No hay información registrada</p>
+                           <button class="add-btn" onclick="profileOpenModal('${section}')">Agregar información</button>`;
 }
 
-/* Editar / Guardar */
-
+/* EDITAR Y GUARDAR*/
 function enableEdit(section, button) {
     const container = document.getElementById(`${section}-info`);
-    const spans = container.querySelectorAll('[data-field]');
+    const spans = container.querySelectorAll('span[data-field]');
 
     spans.forEach(span => {
         const input = document.createElement('input');
         input.className = 'input-edit';
-        input.value = span.textContent;
-        input.dataset.field = span.dataset.field;
+        input.value = span.textContent !== '-' ? span.textContent : '';
+        input.setAttribute('data-field', span.getAttribute('data-field'));
         span.replaceWith(input);
     });
 
-    button.textContent = 'Guardar';
-    button.onclick = () => saveSection(section, button);
+    button.textContent = 'Guardar'; 
 }
 
-function saveSection(section, button) {
+async function saveSection(section, button) {
     const container = document.getElementById(`${section}-info`);
     const inputs = container.querySelectorAll('input');
     const payload = {};
 
     inputs.forEach(input => {
-        payload[input.dataset.field] = input.value;
-
-        const span = document.createElement('span');
-        span.dataset.field = input.dataset.field;
-        span.textContent = input.value;
-        input.replaceWith(span);
+        const fieldName = input.getAttribute('data-field');
+        payload[fieldName] = input.value;
     });
 
-    fetch(`${API_URL}/user/${section}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TOKEN}`
-        },
-        body: JSON.stringify(payload)
-    });
+    try {
+        const res = await profileFetch(`/user/${section}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${TOKEN}`
+            },
+            body: JSON.stringify(payload)
+        });
 
-    button.textContent = 'Editar';
-    button.onclick = () => enableEdit(section, button);
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            if (res.status === 422) {
+                let msgErrores = '';
+                for (let campo in err.errors) msgErrores += err.errors[campo][0] + '\n';
+                alert(`Datos inválidos:\n${msgErrores}`);
+            } else {
+                alert(`No se pudo guardar: ${err.message || res.status}`);
+            }
+            return;
+        }
+
+        inputs.forEach(input => {
+            const span = document.createElement('span');
+            span.setAttribute('data-field', input.getAttribute('data-field'));
+            span.textContent = input.value || '-';
+            input.replaceWith(span);
+        });
+
+        button.textContent = 'Editar';
+        
+        if (section === 'personal') {
+            localStorage.setItem('user_name', payload.name); 
+            window.location.reload();
+        }
+
+    } catch (error) {
+        console.error('Error guardando', error);
+        alert('Error de red al guardar.');
+    }
 }
 
 /* Modal */
 
 let currentModalSection = null;
 
-function openModal(section) {
+function profileOpenModal(section) {
     currentModalSection = section;
     const modal = document.getElementById('data-modal');
     const modalTitle = modal.querySelector('.modal-title');
@@ -137,15 +147,20 @@ function openModal(section) {
     modalTitle.textContent = `Agregar ${section}`;
 
     modalBody.innerHTML = getModalFields(section);
-    modal.classList.add('active');
+    modal.classList.remove('hidden');
 }
 
-function closeModal() {
-    document.getElementById('data-modal').classList.remove('active');
+
+function profileCloseModal() {
+    currentModalSection = null;
+    const modal = document.getElementById('data-modal');
+    if (modal) modal.classList.add('hidden');
 }
 
 function submitModalData(e) {
     e.preventDefault();
+
+    if (!currentModalSection) return; // nada que hacer si no hay sección
 
     const form = e.target;
     const inputs = form.querySelectorAll('input');
@@ -155,7 +170,7 @@ function submitModalData(e) {
         payload[input.name] = input.value;
     });
 
-    fetch(`${API_URL}/user/${currentModalSection}`, {
+    profileFetch(`/user/${currentModalSection}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -164,7 +179,7 @@ function submitModalData(e) {
         body: JSON.stringify(payload)
     })
     .then(() => {
-        closeModal();
+        profileCloseModal();
         loadProfileData();
     });
 }
@@ -178,7 +193,6 @@ function getModalFields(section) {
             <input name="city" placeholder="Ciudad" required />
             <input name="state" placeholder="Estado" required />
             <input name="zip" placeholder="Código Postal" required />
-            <button type="submit">Guardar</button>
         `;
     }
 
@@ -186,7 +200,6 @@ function getModalFields(section) {
         return `
             <input name="card_number" placeholder="Número de tarjeta" required />
             <input name="card_name" placeholder="Titular" required />
-            <button type="submit">Guardar</button>
         `;
     }
 
@@ -202,7 +215,7 @@ function formatLabel(text) {
 
 
 function loadOrders() {
-    fetch(`${API_URL}/orders`, { 
+    profileFetch('/orders', { 
         // 👉 ENDPOINT REAL:
         // GET /api/orders (del usuario autenticado)
         headers: {
@@ -210,9 +223,13 @@ function loadOrders() {
             'Accept': 'application/json'
         }
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) throw new Error('HTTP '+res.status);
+        return res.json();
+    })
     .then(data => renderOrders(data))
-    .catch(() => {
+    .catch((err) => {
+        console.warn('Error cargando pedidos', err);
         document.getElementById('orders-info').innerHTML =
             `<p class="empty-data">No se pudieron cargar los pedidos</p>`;
     });
@@ -223,15 +240,15 @@ function renderOrders(orders) {
     container.innerHTML = '';
 
     if (!orders || orders.length === 0) {
-        container.innerHTML = `
-            <p class="empty-data">Aún no has realizado pedidos</p>
-        `;
+        container.innerHTML = `<p class="empty-data">Aún no has realizado pedidos</p>`;
         return;
     }
 
     orders.forEach(order => {
         const div = document.createElement('div');
         div.className = 'order-item';
+
+        const totalFrascos = order.items ? order.items.reduce((suma, item) => suma + item.quantity, 0) : 0;
 
         div.innerHTML = `
             <div class="order-header">
@@ -240,17 +257,14 @@ function renderOrders(orders) {
                     ${formatStatus(order.status)}
                 </span>
             </div>
-
             <div class="order-meta">
-                <span>${order.items_count} productos</span>
+                <span>${totalFrascos} productos</span>
                 <span>Total: $${order.total}</span>
             </div>
-
             <div class="order-date">
                 ${new Date(order.created_at).toLocaleDateString()}
             </div>
         `;
-
         container.appendChild(div);
     });
 }

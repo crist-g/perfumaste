@@ -27,29 +27,19 @@
         </div>
     </div>
 
-    {{-- MÉTODO DE PAGO --}}
-    <div class="profile-card">
-        <div class="card-header">
-            <h2>Método de pago</h2>
-            <button class="edit-btn" data-section="payment">Editar</button>
-        </div>
-        <div class="card-content" id="payment-info">
-            <p class="loading">Cargando...</p>
-        </div>
-    </div>
 </section>
 
 {{-- MODAL CREAR --}}
-<div class="modal" id="create-modal">
+<div class="modal hidden" id="data-modal"> 
     <div class="modal-box">
-        <h3 id="modal-title"></h3>
-
-        <div id="modal-fields"></div>
-
-        <div class="modal-actions">
-            <button class="btn small" onclick="closeModal()">Cancelar</button>
-            <button class="btn primary" onclick="saveModalData()">Guardar</button>
-        </div>
+        <h3 id="modal-title" class="modal-title"></h3> 
+        <form id="modal-form"> 
+            <div id="modal-fields" class="modal-body"></div> 
+            <div class="modal-actions">
+                <button type="button" class="btn small" onclick="profileCloseModal()">Cancelar</button>
+                <button type="submit" class="btn primary">Guardar</button>
+            </div>
+        </form>
     </div>
 </div>
 

@@ -32,10 +32,30 @@ function renderOrders(orders) {
 
     orders.forEach(order => {
         const tr = document.createElement('tr');
+        
+        // Intentar obtener información del usuario de múltiples formas
+        let userDisplay = 'Sin usuario';
+        
+        // Caso 1: usuario tiene propiedades name/email en el mismo objeto
+        if (order.user_name || order.user_email) {
+            userDisplay = order.user_name ? 
+                `${order.user_name} (${order.user_email})` : 
+                order.user_email;
+        }
+        // Caso 2: usuario anidado en objeto 'user'
+        else if (order.user && typeof order.user === 'object') {
+            const name = order.user.name || order.user.email;
+            const email = order.user.email;
+            if (name && email && name !== email) {
+                userDisplay = `${name} (${email})`;
+            } else {
+                userDisplay = name || 'Sin usuario';
+            }
+        }
 
         tr.innerHTML = `
             <td>${order.id}</td>
-            <td>${order.user_email}</td>
+            <td>${userDisplay}</td>
             <td>$${order.total}</td>
             <td class="status-${order.status}">
                 ${formatStatus(order.status)}

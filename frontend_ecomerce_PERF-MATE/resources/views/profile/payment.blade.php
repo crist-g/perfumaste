@@ -28,14 +28,6 @@
             </div>
         </div>
 
-        {{-- MÉTODO DE PAGO --}}
-        <div class="checkout-card">
-            <h2>Método de pago</h2>
-            <div id="checkout-payment">
-                <p class="loading">Cargando método de pago...</p>
-            </div>
-        </div>
-
         {{-- ACCIÓN --}}
         <div class="checkout-action">
             <div id="paypal-button-container" style="width: 100%; margin-top: 20px;"></div>

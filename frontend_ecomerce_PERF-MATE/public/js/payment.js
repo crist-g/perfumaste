@@ -1,7 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-    loadCart();
+    // sólo ejecutar funciones cuando los elementos existan
+    if (document.getElementById('checkout-products')) {
+        loadCheckoutCart();
+    }
+
+    if (document.getElementById('paypal-button-container')) {
+        initPayPal();
+    }
+
     loadUserData();
-    initPayPal();
 
     const payBtn = document.getElementById('pay-btn');
     if (payBtn) {
@@ -10,30 +17,53 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // CARRITO
-function loadCart() {
-    // Cambiar el nombre de la llave para usar perfume_cart
-    const cart = JSON.parse(localStorage.getItem('perfume_cart')) || [];
+// ayuda para leer el carrito desde el servidor en lugar de localStorage
+async function fetchServerCart() {
+    const token = localStorage.getItem('api_token');
+    if (!token) return [];
+
+    const url = `${window.APP_CONFIG.apiUrl}/cart`;
+
+    try {
+        const res = await fetch(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: 'application/json'
+            }
+        });
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data.items || [];
+    } catch (err) {
+        console.error('Error fetching cart from server:', err);
+        return [];
+    }
+}
+
+async function loadCheckoutCart() {
     const container = document.getElementById('checkout-products');
     const totalEl = document.getElementById('checkout-total');
-
     if (!container) return;
 
     container.innerHTML = '';
     let total = 0;
 
+    const cart = await fetchServerCart();
     if (cart.length === 0) {
         container.innerHTML = '<p>No hay productos en el carrito</p>';
         return;
     }
 
     cart.forEach(item => {
-        total += item.price * item.quantity;
+        const price = item.product?.price || item.price;
+        const name = item.product?.name || item.name;
+        total += price * item.quantity;
 
         const div = document.createElement('div');
         div.className = 'checkout-product';
         div.innerHTML = `
-            <span>${item.name} x${item.quantity}</span>
-            <span>$${item.price * item.quantity}</span>
+            <span>${name} x${item.quantity}</span>
+            <span>$${price * item.quantity}</span>
         `;
         container.appendChild(div);
     });
@@ -41,28 +71,38 @@ function loadCart() {
     totalEl.textContent = `$${total}`;
 }
 
-   //USUARIO / DIRECCIÓN / PAGO
-function loadUserData() {
+   //USUARIO / DIRECCIÓN 
+async function loadUserData() {
+    const token = localStorage.getItem('api_token');
+    if (!token) return;
 
-    /*
-    🔗 ENDPOINT REAL
-    GET /api/user/checkout-info
-    */
+    try {
+        const res = await fetch(`${window.APP_CONFIG.apiUrl}/user`, {
+            headers: { 
+                'Authorization': `Bearer ${token}`, 
+                'Accept': 'application/json' 
+            }
+        });
+        
+        const data = await res.json();
+        const addressContainer = document.querySelector('.Dirección-de-envío-container'); 
 
-    /*
-    fetch(`${window.APP_CONFIG.apiUrl}/user/checkout-info`, {
-        headers: {
-            Authorization: 'Bearer TOKEN'
+        const addressDiv = document.getElementById('checkout-address'); 
+        
+        if (data.address && addressDiv) {
+            addressDiv.innerHTML = `
+                <p style="margin: 5px 0;"><strong>Calle:</strong> ${data.address.street || ''}</p>
+                <p style="margin: 5px 0;"><strong>Ciudad:</strong> ${data.address.city || ''}</p>
+                <p style="margin: 5px 0;"><strong>Estado:</strong> ${data.address.state || ''}</p>
+                <p style="margin: 5px 0;"><strong>C.P.:</strong> ${data.address.zip || ''}</p>
+            `;
+        } else if (addressDiv) {
+            addressDiv.innerHTML = '<p style="color:#d84315; font-size: 14px;"> Ve a tu perfil y agrega una dirección de envío antes de pagar.</p>';
         }
-    })
-    .then(res => res.json())
-    .then(data => {
-        renderAddress(data.address);
-        renderPayment(data.payment);
-    });
-    */
-
-    // Mientras no hay API → no renderiza nada
+        
+    } catch (e) {
+        console.error('Error cargando dirección:', e);
+    }
 }
 
 function renderAddress(address) {
@@ -88,13 +128,16 @@ function renderPayment(payment) {
 }
 
 // Función para mostrar y configurar los botones de PayPal
-function initPayPal() {
-    const cart = JSON.parse(localStorage.getItem('perfume_cart')) || [];
+async function initPayPal() {
+    const cart = await fetchServerCart();
     if (cart.length === 0) return;
 
     // Calcular total
     let totalCobro = 0;
-    cart.forEach(item => totalCobro += (item.price * item.quantity));
+    cart.forEach(item => {
+        const price = item.product?.price || item.price;
+        totalCobro += price * item.quantity;
+    });
 
     const container = document.getElementById('paypal-button-container');
     if (!container) return;
@@ -111,7 +154,6 @@ function initPayPal() {
         //Aprobar pago
         onApprove: function(data, actions) {
             return actions.order.capture().then(function(details) {
-                // Pasar ID real 
                 processPayment(details.id); 
             });
         },
@@ -121,47 +163,48 @@ function initPayPal() {
     }).render('#paypal-button-container');
 }
 
-//PAGO
+// PAGO
 // Recibir el ID de transacción de PayPal como parámetro
 async function processPayment(paypalTransaccionID) {
     const token = localStorage.getItem('api_token');
-    // ver perfumes
-    const cart = JSON.parse(localStorage.getItem('perfume_cart')) || [];
-
     if (!token) {
         alert('Debes iniciar sesión para poder pagar.');
         window.location.href = '/login';
         return;
     }
 
+    // traer los items directamente del servidor
+    const cart = await fetchServerCart();
+
     if (cart.length === 0) {
         alert('No hay nada que cobrar. Tu carrito está vacío.');
         return;
     }
 
+    const payloadItems = cart.map(item => ({
+        id: item.product?.id || item.id,
+        name: item.product?.name || item.name,
+        price: item.product?.price || item.price,
+        quantity: item.quantity
+    }));
+
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/checkout', {
+        const response = await fetch(`${window.APP_CONFIG?.apiUrl || 'http://127.0.0.1:8000/api'}/checkout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': `Bearer ${token}` 
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
                 payment_id: paypalTransaccionID,
-                // Mandar los perfumes actuales para que el back reste stock
-                items: cart 
+                items: payloadItems
             })
         });
 
         const data = await response.json();
 
         if (response.status === 201 || response.ok) {
-            
-            // Limpiar el almacenamiento local al terminar de pagar
-            localStorage.removeItem('perfume_cart'); 
-            
-            // Mandar a la vista del ticket con el ID de orden que devolvió el servidor
             window.location.href = `/ticket?order=${data.order_id}`;
         } else {
             alert('Hubo un error con la compra: ' + (data.message || 'Error desconocido'));
@@ -169,6 +212,6 @@ async function processPayment(paypalTransaccionID) {
 
     } catch (error) {
         console.error('Error de conexión:', error);
-        alert('No se pudo conectar con el servidor 8000.');
+        alert('No se pudo conectar con el servidor.');
     }
 }

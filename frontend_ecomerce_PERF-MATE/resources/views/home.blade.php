@@ -10,6 +10,15 @@
 {{-- FILTROS --}}
 <section class="filters">
     <input type="text" id="search" placeholder="Buscar perfume">
+    
+    {{-- SELECTOR HÍBRIDO --}}
+    <input list="brand-options" id="brand" placeholder="Todas las marcas">
+    <datalist id="brand-options">
+    </datalist>
+
+    <input list="category-options" id="category" placeholder="Todas las categorías">
+    <datalist id="category-options">
+    </datalist>
 
     <input type="number" id="min_price" placeholder="Precio mínimo" min="0">
     <input type="number" id="max_price" placeholder="Precio máximo" min="0">

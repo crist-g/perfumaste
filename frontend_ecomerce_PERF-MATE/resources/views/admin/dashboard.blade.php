@@ -20,6 +20,7 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Marca</th>
+                    <th>Categoria</th>
                     <th>Precio</th>
                     <th>Stock</th>
                     <th>Acciones</th>
@@ -50,6 +51,10 @@
             <input type="number" id="price" placeholder="Precio" required>
             <input type="number" id="stock" placeholder="Stock" required>
             
+            <select id="category_id" required style="width:100%; padding:10px; margin-bottom:12px;">
+                <option value="" disabled selected>Seleccione categoría</option>
+            </select>
+
             <textarea id="description" placeholder="Descripción completa del perfume..." required style="width: 100%; margin-bottom: 10px;"></textarea>
 
             {{-- SUBIR IMAGEN --}}
@@ -71,3 +76,7 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="/js/admin.js"></script>
+@endpush

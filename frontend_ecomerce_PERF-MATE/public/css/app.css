@@ -396,6 +396,7 @@ select:focus {
     transition: transform .2s ease, opacity .2s ease;
 }
 
+
 .login-icon:hover {
     transform: scale(1.1);
 }
