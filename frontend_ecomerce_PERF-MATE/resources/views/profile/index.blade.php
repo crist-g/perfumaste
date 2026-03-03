@@ -27,6 +27,15 @@
         </div>
     </div>
 
+    {{-- MIS PEDIDOS --}}
+    <div class="profile-card">
+        <div class="card-header">
+            <h2>Mis pedidos</h2>
+        </div>
+        <div class="card-content" id="orders-info">
+            <p class="loading">Cargando pedidos...</p>
+        </div>
+    </div>
 </section>
 
 {{-- MODAL CREAR --}}
@@ -43,16 +52,23 @@
     </div>
 </div>
 
-{{-- PEDIDOS --}}
-<div class="profile-card">
-    <div class="card-header">
-        <h2>Mis pedidos</h2>
+{{-- TEMPLATE PARA LAS ORDENES (Respeta tu CSS) --}}
+<template id="order-template">
+    <div class="order-item">
+        <div class="order-header">
+            <span class="order-id"></span>
+            <span class="order-status"></span>
+        </div>
+        <div class="order-meta">
+            <span class="order-count"></span>
+            <span class="order-total"></span>
+        </div>
+        <div class="order-date"></div>
     </div>
-    <div class="card-content" id="orders-info">
-        <p class="loading">Cargando pedidos...</p>
-    </div>
-</div>
-
-<script src="{{ asset('js/profile.js') }}"></script>
+</template>
 
 @endsection
+
+@push('scripts')
+<script src="{{ asset('js/profile.js') }}"></script>
+@endpush

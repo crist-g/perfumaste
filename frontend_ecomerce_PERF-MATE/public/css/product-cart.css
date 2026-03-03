@@ -131,6 +131,98 @@
     opacity: .9;
 }
 
+/* selector de cantidad */
+.product-quantity-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.product-quantity-control .product-actions {
+    gap: 5px;
+}
+
+.stock {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+/* Asegura que el enlace se vea y actúe como un botón */
+.product-actions .btn-details {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none; /* Quita el subrayado azul por defecto */
+    color: #111; /* Color de texto para el botón gris */
+    flex: 1;
+    padding: 10px;
+    font-size: .85rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: .3s ease;
+    background: #eee;
+}
+
+.product-actions .btn-details:hover {
+    background: #ddd;
+}
+
+.product-quantity-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+/* Alineación de botones detalle y carrito */
+.product-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.product-actions .btn-details, 
+.product-actions .btn-cart {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-quantity-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.quantity-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-qty {
+    background: #eee;
+    border: none;
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.p-qty {
+    width: 35px;
+    text-align: center;
+    border: 1px solid #eee;
+    margin: 0 5px;
+    border-radius: 4px;
+}
 /* ANIMACIONES */
 @keyframes fadeUp {
     from {

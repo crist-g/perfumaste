@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadOrders() {
     try {
         /*
-        🔗 ENDPOINT REAL
+        ENDPOINT REAL
         GET /api/admin/orders
         */
 

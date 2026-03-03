@@ -216,7 +216,7 @@ function formatLabel(text) {
 
 function loadOrders() {
     profileFetch('/orders', { 
-        // 👉 ENDPOINT REAL:
+        
         // GET /api/orders (del usuario autenticado)
         headers: {
             'Authorization': `Bearer ${TOKEN}`,
@@ -235,9 +235,13 @@ function loadOrders() {
     });
 }
 
+/* Reemplaza la función renderOrders anterior por esta */
+
 function renderOrders(orders) {
     const container = document.getElementById('orders-info');
-    container.innerHTML = '';
+    const template = document.getElementById('order-template');
+    
+    container.innerHTML = ''; // Limpiamos el "Cargando..."
 
     if (!orders || orders.length === 0) {
         container.innerHTML = `<p class="empty-data">Aún no has realizado pedidos</p>`;
@@ -245,27 +249,31 @@ function renderOrders(orders) {
     }
 
     orders.forEach(order => {
-        const div = document.createElement('div');
-        div.className = 'order-item';
+        // Clonamos la estructura del template
+        const clone = template.content.cloneNode(true);
 
+        // Calculamos cantidad de productos
         const totalFrascos = order.items ? order.items.reduce((suma, item) => suma + item.quantity, 0) : 0;
 
-        div.innerHTML = `
-            <div class="order-header">
-                <span class="order-id">Pedido #${order.id}</span>
-                <span class="order-status status-${order.status}">
-                    ${formatStatus(order.status)}
-                </span>
-            </div>
-            <div class="order-meta">
-                <span>${totalFrascos} productos</span>
-                <span>Total: $${order.total}</span>
-            </div>
-            <div class="order-date">
-                ${new Date(order.created_at).toLocaleDateString()}
-            </div>
-        `;
-        container.appendChild(div);
+        // Inyectamos los datos en las clases correspondientes
+        clone.querySelector('.order-id').textContent = `Pedido #${order.id}`;
+        
+        const statusSpan = clone.querySelector('.order-status');
+        statusSpan.textContent = formatStatus(order.status);
+        statusSpan.classList.add(`status-${order.status}`); // Aplica status-confirmed, status-shipped, etc.
+
+        clone.querySelector('.order-count').textContent = `${totalFrascos} productos`;
+        clone.querySelector('.order-total').textContent = `Total: $${order.total}`;
+        
+        const fecha = new Date(order.created_at).toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        clone.querySelector('.order-date').textContent = fecha;
+
+        // clon al contenedor real
+        container.appendChild(clone);
     });
 }
 
